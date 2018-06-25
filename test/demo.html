@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/bootstrap-colorpicker/3.0.0-beta.1/css/bootstrap-colorpicker.min.css" rel="stylesheet">
+    <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="//cdn.bootcss.com/underscore.js/1.9.0/underscore-min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap-colorpicker/3.0.0-beta.1/js/bootstrap-colorpicker.min.js"></script>
+    <script src="//cdn.bootcss.com/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+    <script src="//cdn.bootcss.com/jquery-validate/1.17.0/localization/messages_zh.min.js"></script>
+    <script src="../src/jquery.deserialize.js"></script>
+    <script src="../src/bootstrap-jsonform.js"></script>
+    <script src="../src/form-dialog.js"></script>
+</head>
+<body>
+<div id="container" style="padding: 0 20px;">
+
+</div>
+<script>
+  var formConf = {
+    id: 'result',
+    options: {inline: true},
+    children: [
+      {
+        type: 'tabs',
+        tabItems: [
+          { id: 'taskInfo', label: '任务信息', children: [ ], },
+          { id: 'setting', label: '业务设置', children: [ ], },
+        ]
+      },
+      {type: 'radio', name: "status", wrapClass: 'text-center', inline: true, enums: [{label: '下线', value: 0}, {label: '上线', value: 1}]}
+    ],
+  },
+    taskItems = [
+      { id: 'projectId', type: 'number', label: '任务ID', readonly: true, },
+      { id: 'title', type: 'text', label: '任务名称', placeholder:'填写任务名称，便于用户查看', required: true},
+      { id: 'desc', type: 'textarea', label: '任务描述', required: true},
+      { id: 'gid', type: 'number', label: '培训考核ID', required: true},
+      { id: 'price', type: 'number', label: '任务单价', required: true},
+      { id: 'team_task', type: 'select', label: '团队任务', required: true, enums: [{label: '是', value: 1}, {label: '否', value: 0}]},
+      { id: 'lock_seconds', type: 'number', label: '答题时限', required: true, placeholder: '设置做题时间，单位秒'},
+      { id: 'redo_seconds', type: 'number', label: '重做时限', required: true, placeholder: '设置做题时间，单位秒'},
+      { id: 'start_time', type: 'datetime', label: '开始时间', required: true},
+      { id: 'end_time', type: 'datetime', label: '结束时间', required: true},
+    ],
+    settingItems = [
+      {id: 'undefined_1', type: 'text', label: '计数物体', placeholder: '请填写物体名', },
+      {id: 'undefined_2', type: 'number', label: '拟合人数', required: true, placeholder: '数值大于等于1'},
+      {id: 'undefined_3', type: 'radio', label: '是否重做', inline: true, enums: [{label: '是', value: 1}, {label: '否', value: 0}]},
+      {id: 'undefined_4', type: 'radio', label: '质检设置', inline: true, enums: [{label: '人工质检', value: 0}, {label: '自动通过', value: 1}]},
+    ],
+    moduleFormConfigs = {
+      'counting': {'taskItemSelected': 'all', 'settingItemSelected': [0]},
+      'examine': {'taskItemSelected': 'all', 'settingItemSelected': [2]},
+      'transfer': {'taskItemSelected': 'all', 'settingItemSelected': [1]},
+      'judge': {'taskItemSelected': 'all', 'settingItemSelected': [1]},
+      'drawframe': {'taskItemSelected': 'all', 'settingItemSelected': []},
+      'qc': {'taskItemSelected': [0, 1, 2, 3, 5, 8, 9], 'settingItemSelected': [3]},
+    };
+
+  function getConfItems(items, selected) {
+    var arr = [];
+    if (selected === 'all') return items.slice();
+    for (var i = 0; i < selected.length; ++i) {
+      arr.push(items[selected[i]])
+    }
+    return arr;
+  }
+
+  function buildFormConf(moduleName) {
+    var confInfo = moduleFormConfigs[moduleName],
+      conf = _.create(null, formConf);
+
+    conf.children[0].tabItems[0].children = getConfItems(taskItems, confInfo.taskItemSelected);
+    conf.children[0].tabItems[1].children = getConfItems(settingItems, confInfo.settingItemSelected);
+    return conf;
+  }
+</script>
+<script>
+  // { id: 'color', type: 'color', label: '选择颜色', required: true},
+  // $.formDialog({id: 'dialog', title: '计数模块配置'}, buildFormConf('counting'));
+  // $.formDialog({id: 'dialog', title: '审核模块配置'}, buildFormConf('examine'));
+  // $.formDialog({id: 'dialog', title: '转写模块配置'}, buildFormConf('transfer'));
+  // $.formDialog({id: 'dialog', title: '快判模块配置'}, buildFormConf('judge'));
+  // $.formDialog({id: 'dialog', title: '质检模块配置'}, buildFormConf('qc'));
+  var data = JSON.parse('{"projectId":"","title":"d","desc":"f","gid":"2","price":"3","team_task":"1","lock_seconds":"4","redo_seconds":"2","start_time":"06/11/2018","end_time":"06/29/2018","status":"0"}');
+  $.formDialog({id: 'dialog', title: '标注模块配置'}, buildFormConf('drawframe'), data, function (data) {
+    console.log(JSON.stringify(data))
+  });
+
+
+</script>
+
+</body>
+</html>
