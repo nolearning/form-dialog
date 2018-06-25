@@ -7,7 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="//cdn.bootcss.com/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
-    <link href="//cdn.bootcss.com/bootstrap-colorpicker/3.0.0-beta.1/css/bootstrap-colorpicker.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/bootstrap-colorpicker/3.0.0-beta.1/css/bootstrap-colorpicker.min.css"
+          rel="stylesheet">
+    <link href="//cdn.bootcss.com/bootstrap-table/1.12.1/bootstrap-table.min.css" rel="stylesheet">
     <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="//cdn.bootcss.com/underscore.js/1.9.0/underscore-min.js"></script>
@@ -15,6 +17,8 @@
     <script src="//cdn.bootcss.com/bootstrap-colorpicker/3.0.0-beta.1/js/bootstrap-colorpicker.min.js"></script>
     <script src="//cdn.bootcss.com/jquery-validate/1.17.0/jquery.validate.min.js"></script>
     <script src="//cdn.bootcss.com/jquery-validate/1.17.0/localization/messages_zh.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap-table/1.12.1/locale/bootstrap-table-zh-CN.js"></script>
     <script src="../src/jquery.deserialize.js"></script>
     <script src="../src/bootstrap-jsonform.js"></script>
     <script src="../src/form-dialog.js"></script>
@@ -25,36 +29,60 @@
 </div>
 <script>
   var formConf = {
-    id: 'result',
-    options: {inline: true},
-    children: [
-      {
-        type: 'tabs',
-        tabItems: [
-          { id: 'taskInfo', label: '任务信息', children: [ ], },
-          { id: 'setting', label: '业务设置', children: [ ], },
-        ]
-      },
-      {type: 'radio', name: "status", wrapClass: 'text-center', inline: true, enums: [{label: '下线', value: 0}, {label: '上线', value: 1}]}
-    ],
-  },
+      id: 'result',
+      options: {inline: true},
+      children: [
+        {
+          type: 'tabs',
+          tabItems: [
+            {id: 'taskInfo', label: '任务信息', children: [],},
+            {id: 'setting', label: '业务设置', children: [],},
+          ]
+        },
+        {
+          type: 'radio',
+          id: "status",
+          wrapClass: 'text-center',
+          inline: true,
+          enums: [{label: '下线', value: 0}, {label: '上线', value: 1}]
+        }
+      ],
+    },
     taskItems = [
-      { id: 'projectId', type: 'number', label: '任务ID', readonly: true, },
-      { id: 'title', type: 'text', label: '任务名称', placeholder:'填写任务名称，便于用户查看', required: true},
-      { id: 'desc', type: 'textarea', label: '任务描述', required: true},
-      { id: 'gid', type: 'number', label: '培训考核ID', required: true},
-      { id: 'price', type: 'number', label: '任务单价', required: true},
-      { id: 'team_task', type: 'select', label: '团队任务', required: true, enums: [{label: '是', value: 1}, {label: '否', value: 0}]},
-      { id: 'lock_seconds', type: 'number', label: '答题时限', required: true, placeholder: '设置做题时间，单位秒'},
-      { id: 'redo_seconds', type: 'number', label: '重做时限', required: true, placeholder: '设置做题时间，单位秒'},
-      { id: 'start_time', type: 'datetime', label: '开始时间', required: true},
-      { id: 'end_time', type: 'datetime', label: '结束时间', required: true},
+      {id: 'projectId', type: 'number', label: '任务ID', readonly: true,},
+      {id: 'title', type: 'text', label: '任务名称', placeholder: '填写任务名称，便于用户查看', required: true},
+      {id: 'desc', type: 'textarea', label: '任务描述', required: true},
+      {id: 'gid', type: 'number', label: '培训考核ID', required: true},
+      {id: 'price', type: 'number', label: '任务单价', required: true},
+      {
+        id: 'team_task',
+        type: 'select',
+        label: '团队任务',
+        required: true,
+        enums: [{label: '是', value: 1}, {label: '否', value: 0}]
+      },
+      {id: 'lock_seconds', type: 'number', label: '答题时限', required: true, placeholder: '设置做题时间，单位秒'},
+      {id: 'redo_seconds', type: 'number', label: '重做时限', required: true, placeholder: '设置做题时间，单位秒'},
+      {id: 'start_time', type: 'datetime', label: '开始时间', required: true},
+      {id: 'end_time', type: 'datetime', label: '结束时间', required: true},
     ],
     settingItems = [
-      {id: 'undefined_1', type: 'text', label: '计数物体', placeholder: '请填写物体名', },
+      {id: 'undefined_1', type: 'text', label: '计数物体', placeholder: '请填写物体名',},
       {id: 'undefined_2', type: 'number', label: '拟合人数', required: true, placeholder: '数值大于等于1'},
-      {id: 'undefined_3', type: 'radio', label: '是否重做', inline: true, enums: [{label: '是', value: 1}, {label: '否', value: 0}]},
-      {id: 'undefined_4', type: 'radio', label: '质检设置', inline: true, enums: [{label: '人工质检', value: 0}, {label: '自动通过', value: 1}]},
+      {
+        id: 'undefined_3',
+        type: 'radio',
+        label: '是否重做',
+        inline: true,
+        enums: [{label: '是', value: 1}, {label: '否', value: 0}]
+      },
+      {
+        id: 'undefined_4',
+        type: 'radio',
+        label: '质检设置',
+        inline: true,
+        enums: [{label: '人工质检', value: 0}, {label: '自动通过', value: 1}]
+      },
     ],
     moduleFormConfigs = {
       'counting': {'taskItemSelected': 'all', 'settingItemSelected': [0]},
@@ -91,10 +119,128 @@
   // $.formDialog({id: 'dialog', title: '快判模块配置'}, buildFormConf('judge'));
   // $.formDialog({id: 'dialog', title: '质检模块配置'}, buildFormConf('qc'));
   var data = JSON.parse('{"projectId":"","title":"d","desc":"f","gid":"2","price":"3","team_task":"1","lock_seconds":"4","redo_seconds":"2","start_time":"06/11/2018","end_time":"06/29/2018","status":"0"}');
-  $.formDialog({id: 'dialog', title: '标注模块配置'}, buildFormConf('drawframe'), data, function (data) {
-    console.log(JSON.stringify(data))
-  });
 
+  function drawFrameDialog(data) {
+    var $table = null, settingDialogOption = {id: 'setting-dialog', title: '添加标注项'},
+      tableId = 'undefine_table_id', tableData = data[tableId],
+      labelTypes = ['点', '线'],
+      maxId = _.max(tableData, function (item) { return item.id; })['id'],
+      tableColumns = [
+        {radio: 'true', filed: 'radio',},
+        {field: 'mid', title: '属性ID'},
+        {
+          field: 'type', title: '标注方式', formatter: function (value) {
+            return labelTypes[value]
+          }
+        },
+        //TODO: need fix id
+        {field: 'undefine_object', title: '标注物体'},
+        {field: 'minpixl', title: '最小像素'},
+        {
+          field: 'fill', title: '是否填充', formatter: function (value) {
+            return value ? '填充' : '不填充'
+          }
+        },
+        {
+          field: 'outside', title: '图片外', formatter: function (value) {
+            return value ? '是' : '否'
+          }
+        },
+        {field: 'color', title: '颜色'},
+        {field: 'opacity', title: '透明度'},
+        {field: 'order', title: '显示顺序'},
+        {
+          field: 'status', title: '状态', formatter: function (value) {
+            return value ? '启用' : '禁用'
+          }
+        },
+      ],
+    settingFromConf = {
+      id: 'prop-edit',
+      options: {inline: true},
+      children: [
+        // TODO: need to dynamic add type enums
+        {id: 'type', label: '标注方式', type: 'select', required: true, enums: [{label: '点', value: '0'}, {label: '线', value: 1}]},
+        //TODO: need fix id
+        {id: 'undefine_object', label: '标注物体', type: 'text', placeholder: '标注物体标签名'},
+        {id: 'minpixl', label: '最小像素', type: 'text', required: true, placeholder: '限制标注的最小像素，例如20*20'},
+        {
+          id: 'fill',
+          label: '是否填充',
+          type: 'radio',
+          inline: true,
+          enums: [{label: '不填充', value: 0}, {label: '填充', value: 1}]
+        },
+        {
+          id: 'outside',
+          label: '图片外',
+          type: 'radio',
+          inline: true,
+          enums: [{label: '否', value: 0}, {label: '是', value: 1}]
+        },
+        {id: 'color', label: '颜色', type: 'color', required: true},
+        {id: 'opacity', label: '透明度', type: 'number'},
+        {id: 'order', label: '显示顺序', type: 'number', placeholder: '数值越大,显示越靠前'},
+        {
+          id: 'status',
+          label: '状态',
+          type: 'radio',
+          inline: true,
+          enums: [{label: '禁用', value: 0}, {label: '启用', value: 1}]
+        },
+      ],
+    };
+
+    function bindEvents() {
+      $('#table-add-btn').on('click', function (e) {
+        e.preventDefault();
+        $.formDialog(settingDialogOption, settingFromConf, null, function (data) {
+          ++maxId;
+          data['mid'] = maxId;
+          $table.bootstrapTable('append', [data]);
+        })
+      });
+
+      $('#table-edit-btn').on('click', function (e) {
+        e.preventDefault();
+        var rows = $table.bootstrapTable('getSelections'),
+          index = $('input[name="btSelectItem"]:checked').data('index');
+        if(rows.length == 0) return;
+
+        $.formDialog(settingDialogOption, settingFromConf, rows[0], function (data) {
+          $table.bootstrapTable('updateRow', {index: index, row: data});
+        })
+      })
+    }
+
+    function init() {
+      maxId = !maxId ? 0 : maxId;
+      //TODO: fix table id
+      var buttons = '<div><button id="table-add-btn" class="btn btn-default">添加</button>' +
+        '<button id="table-edit-btn" class="btn btn-default">编辑</button></div>';
+      $(buttons).appendTo('#setting');
+      $table = $('<table>').prop('id', tableId).appendTo('#setting');
+    }
+
+    function load() {
+      init();
+      $table.bootstrapTable({
+        columns: tableColumns,
+        data: tableData,
+      });
+      bindEvents();
+    }
+
+    function save(formData) {
+      if ($table) formData[$table.prop('id')] = $table.bootstrapTable('getData');
+      //TODO: do something else;
+    }
+
+    $.formDialog({id: 'dialog', title: '标注模块配置'}, buildFormConf('drawframe'), data, save, load);
+
+  }
+
+  drawFrameDialog(data);
 
 </script>
 

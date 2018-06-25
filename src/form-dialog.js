@@ -40,24 +40,28 @@
 
     return data;
   }
-  $.formDialog = function (options, formSchema, data, submit) {
-    var modal = $(options.id), formElem = null;
+  $.formDialog = function (options, formSchema, data, onSubmit, onLoad) {
+    var modal = $('#' + options.id), formElem = null;
     if(modal.length === 0) {
       options.formId = formSchema.id;
       modal = $(_.template(dialogTemplate)(options)).appendTo(document.body);
     } else {
       modal.find('h4').text(options.title);
     }
-    $.jsonform(formSchema, modal.find('.modal-body'));
+    $.jsonform(formSchema, modal.find('.modal-body').html(''));
 
     formElem = $('#'+formSchema.id);
     if (data) {
       formElem.deserialize(data);
     }
-    formElem.validate();
-    formElem.on('submit', function () {
-      submit(getFormData(formElem));
+    formElem.validate({
+      submitHandler: function () {
+        onSubmit(getFormData(formElem));
+        modal.modal('hide');
+      }
     });
-    modal.modal({show:true});
+
+    onLoad && onLoad();
+    modal.modal('show');
   }
 }));

@@ -45,7 +45,7 @@
       '<% for(var i = 0; i < element.enums.length; ++i) {%>' +
         '<% !element.inline && print("<div class=\\"" + element.type +"\\">")%>' +
           '<label <% element.inline && print("class=\\"" +  element.type + "-inline\\"")%>>' +
-            '<input type="<%= element.type%>" name="<%= element.name%>" ' +
+            '<input type="<%= element.type%>" name="<%= element.id%>" ' +
               'value="<%= element.enums[i].value%>"> ' +
             '<%= element.enums[i].label%>' +
           '</label>' +
